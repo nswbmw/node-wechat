@@ -1,0 +1,26 @@
+{
+  "name": "node-wechat",
+  "version": "0.0.1",
+  "description": "Node.js 微信公众平台 API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nswbmw/node-wechat"
+  },
+  "keywords": [
+    "wechat",
+    "微信",
+    "weixin"
+  ],
+  "author": "nswbmw",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nswbmw/node-wechat/issues"
+  },
+  "dependencies": {
+    "xml2js": "*"
+  }
+}
