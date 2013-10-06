@@ -1,7 +1,7 @@
 var http = require('http'),
     wechat = require('node-wechat');
 
-wechat.token = 'nswbmw';
+wechat.token = 'your_token';
 
 http.createServer(function (req, res) {
   //检验 token
@@ -21,12 +21,12 @@ http.createServer(function (req, res) {
     var msg = {
       FromUserName : data.ToUserName,
       ToUserName : data.FromUserName,
-      MsgType : "music",
+      //MsgType : "music",
       Title : "宋冬野",
       Description : "宋冬野——摩登天空7",
       MusicUrl : "http://zhangmenshiting.baidu.com/data2/music/71272862/44897031226800128.mp3?xcode=1a2d5c8fd915c2383b15453819db7b4dc3b34145ef4199ad",
-      HQMusicUrl : "http://zhangmenshiting.baidu.com/data2/music/71272862/44897031226800128.mp3?xcode=1a2d5c8fd915c2383b15453819db7b4dc3b34145ef4199ad",
-      FuncFlag : 0
+      //HQMusicUrl : "http://zhangmenshiting.baidu.com/data2/music/71272862/44897031226800128.mp3?xcode=1a2d5c8fd915c2383b15453819db7b4dc3b34145ef4199ad",
+      //FuncFlag : 0
     }
 
     //回复信息
@@ -38,7 +38,7 @@ http.createServer(function (req, res) {
     var msg = {
       FromUserName : data.ToUserName,
       ToUserName : data.FromUserName,
-      MsgType : "text",
+      //MsgType : "text",
       Content : "这是图片回复"
     }
     wechat.send(msg);
@@ -49,7 +49,7 @@ http.createServer(function (req, res) {
     var msg = {
       FromUserName : data.ToUserName,
       ToUserName : data.FromUserName,
-      MsgType : "text",
+      //MsgType : "text",
       Content : "这是地址回复"
     }
     wechat.send(msg);
@@ -60,7 +60,7 @@ http.createServer(function (req, res) {
     var msg = {
       FromUserName : data.ToUserName,
       ToUserName : data.FromUserName,
-      MsgType : "text",
+      //MsgType : "text",
       Content : "这是链接回复"
     }
     wechat.send(msg);
@@ -71,8 +71,30 @@ http.createServer(function (req, res) {
     var msg = {
       FromUserName : data.ToUserName,
       ToUserName : data.FromUserName,
-      MsgType : "text",
+      //MsgType : "text",
       Content : "这是事件回复"
+    }
+    wechat.send(msg);
+  });
+
+  //监听语音信息
+  wechat.voice(function (data) {
+    var msg = {
+      FromUserName : data.ToUserName,
+      ToUserName : data.FromUserName,
+      //MsgType : "text",
+      Content : "这是语音回复"
+    }
+    wechat.send(msg);
+  });
+
+  //监听视频信息
+  wechat.video(function (data) {
+    var msg = {
+      FromUserName : data.ToUserName,
+      ToUserName : data.FromUserName,
+      //MsgType : "text",
+      Content : "这是视频回复"
     }
     wechat.send(msg);
   });
@@ -82,7 +104,7 @@ http.createServer(function (req, res) {
     var msg = {
       FromUserName : data.ToUserName,
       ToUserName : data.FromUserName,
-      MsgType : "news",
+      //MsgType : "news",
       Articles : [
         {
           Title: "习近平印尼国会演讲 向现场观众问好:阿巴嘎坝",

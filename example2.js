@@ -1,7 +1,7 @@
 var http = require('http'),
     wechat = require('node-wechat');
 
-wechat.token = 'nswbmw';
+wechat.token = 'your_token';
 
 http.createServer(function (req, res) {
   //检验 token
@@ -20,11 +20,15 @@ http.createServer(function (req, res) {
     // TODO
   }).event(function (data) {
     // TODO
+  }).voice(function (data) {
+    // TODO
+  }).video(function (data) {
+    // TODO
   }).all(function (data) {
     var msg = {
       FromUserName : data.ToUserName,
       ToUserName : data.FromUserName,
-      MsgType : "news",
+      //MsgType : "news",
       Articles : [
         {
           Title: "习近平印尼国会演讲 向现场观众问好:阿巴嘎坝",

@@ -27,9 +27,9 @@
         var msg = {
           FromUserName : data.ToUserName,
           ToUserName : data.FromUserName,
-          MsgType : "text",
+          //MsgType : "text",
           Content : "这是文本回复",
-          FuncFlag : 0
+          //FuncFlag : 0
         }
         //回复信息
         wechat.send(msg);
@@ -46,6 +46,12 @@
 
       //监听事件信息
       //wechat.event(function (data) { ... });
+
+      //监听语音信息
+      //wechat.voice(function (data) { ... });
+
+      //监听视频信息
+      //wechat.video(function (data) { ... });
 
       //监听所有信息
       //wechat.all(function (data) { ... });
@@ -77,11 +83,15 @@
         // TODO
       }).event(function (data) {
         // TODO
+      }).voice(function (data) {
+        // TODO
+      }).video(function (data) {
+        // TODO
       }).all(function (data) {
         var msg = {
           FromUserName : data.ToUserName,
           ToUserName : data.FromUserName,
-          MsgType : "news",
+          //MsgType : "news",
           Articles : [...]
         }
         wechat.send(msg);

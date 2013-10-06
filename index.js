@@ -48,9 +48,10 @@ Wechat.prototype.handler = function(req, res) {
 
 //解析器
 Wechat.prototype.toJSON = function(xml) {
+  var msg = {};
   xml2js.parseString(xml, function (err, result) {
     var data = result.xml;
-    var msg = {};
+
     msg.ToUserName = data.ToUserName[0];
     msg.FromUserName = data.FromUserName[0];
     msg.CreateTime = data.CreateTime[0];
@@ -67,6 +68,7 @@ Wechat.prototype.toJSON = function(xml) {
       case 'image' : 
         msg.PicUrl = data.PicUrl[0];
         msg.MsgId = data.MsgId[0];
+        msg.MediaId = data.MediaId[0];
 
         emitter.emit("image", msg);
         break;
@@ -96,8 +98,26 @@ Wechat.prototype.toJSON = function(xml) {
 
         emitter.emit("event", msg);
         break;
+
+      case 'voice' :
+        msg.MediaId = data.MediaId[0];
+        msg.Format = data.Format[0];
+        msg.MsgId = data.MsgId[0];
+        msg.Recognition = data.Recognition[0];
+
+        emitter.emit("voice", msg);
+        break;
+
+      case 'video' :
+        msg.MediaId = data.MediaId[0];
+        msg.ThumbMediaId = data.ThumbMediaId[0];
+        msg.MsgId = data.MsgId[0];
+
+        emitter.emit("video", msg);
+        break;
     }
   });
+  return msg;
 }
 
 //监听文本信息
@@ -130,6 +150,18 @@ Wechat.prototype.event = function(callback) {
   return this;
 }
 
+//监听语音信息
+Wechat.prototype.voice = function(callback) {
+  emitter.on("voice", callback);
+  return this;
+}
+
+//监听视频信息
+Wechat.prototype.video = function(callback) {
+  emitter.on("video", callback);
+  return this;
+}
+
 //监听所有信息
 Wechat.prototype.all = function(callback) {
   emitter.on("text", callback);
@@ -137,34 +169,46 @@ Wechat.prototype.all = function(callback) {
   emitter.on("location", callback);
   emitter.on("link", callback);
   emitter.on("event", callback);
+  emitter.on("voice", callback);
+  emitter.on("video", callback);
 
   return this;
 }
 
 //将 js 组装成 xml
 Wechat.prototype.toXML = function(data) {
+  //自动检测 MsgType
+  var MsgType = "";
+  if (!data.MsgType) {
+    if (data.hasOwnProperty("Content")) MsgType = "text";
+    if (data.hasOwnProperty("MusicUrl")) MsgType = "music";
+    if (data.hasOwnProperty("Articles")) MsgType = "news";
+  } else {
+    MsgType = data.MsgType;
+  }
+
   var msg = "" +
       "<xml>" +
       "<ToUserName><![CDATA[" + data.ToUserName + "]]></ToUserName>" +
       "<FromUserName><![CDATA[" + data.FromUserName + "]]></FromUserName>" +
-      "<CreateTime>" + Date.now() + "</CreateTime>" +
-      "<MsgType><![CDATA[" + data.MsgType + "]]></MsgType>" +
-      "<FuncFlag>" + data.FuncFlag + "</FuncFlag>";
+      "<CreateTime>" + Date.now()/1000 + "</CreateTime>" +
+      "<MsgType><![CDATA[" + MsgType + "]]></MsgType>" +
+      "<FuncFlag>" + (data.FuncFlag || 0) + "</FuncFlag>";
 
-  switch(data.MsgType) {
+  switch(MsgType) {
     case 'text' : 
       msg += "" +
-        "<Content><![CDATA[" + data.Content + "]]></Content>" +
+        "<Content><![CDATA[" + (data.Content || '') + "]]></Content>" +
         "</xml>";
       return msg;
 
     case 'music' :
       msg += "" +
         "<Music>" +
-        "<Title><![CDATA[" + data.Title + "]]></Title>" +
-        "<Description><![CDATA[" + data.Description + "]]></Description>" +
-        "<MusicUrl><![CDATA[" + data.MusicUrl + "]]></MusicUrl>" +
-        "<HQMusicUrl><![CDATA[" + data.HQMusicUrl + "]]></HQMusicUrl>" +
+        "<Title><![CDATA[" + (data.Title || '') + "]]></Title>" +
+        "<Description><![CDATA[" + (data.Description || '') + "]]></Description>" +
+        "<MusicUrl><![CDATA[" + (data.MusicUrl || '') + "]]></MusicUrl>" +
+        "<HQMusicUrl><![CDATA[" + (data.HQMusicUrl || data.MusicUrl || '') + "]]></HQMusicUrl>" +
         "</Music>" +
         "</xml>";
       return msg;
@@ -175,10 +219,10 @@ Wechat.prototype.toXML = function(data) {
       for (var i in data.Articles) {
         ArticlesStr += "" +
           "<item>" + 
-          "<Title><![CDATA[" + data.Articles[i].Title + "]]></Title>" + 
-          "<Description><![CDATA[" + data.Articles[i].Description + "]]></Description>" + 
-          "<PicUrl><![CDATA[" + data.Articles[i].PicUrl + "]]></PicUrl>" + 
-          "<Url><![CDATA[" + data.Articles[i].Url + "]]></Url>" + 
+          "<Title><![CDATA[" + (data.Articles[i].Title || '') + "]]></Title>" + 
+          "<Description><![CDATA[" + (data.Articles[i].Description || '') + "]]></Description>" + 
+          "<PicUrl><![CDATA[" + (data.Articles[i].PicUrl || '') + "]]></PicUrl>" + 
+          "<Url><![CDATA[" + (data.Articles[i].Url ||'') + "]]></Url>" + 
           "</item>";
       }
 
