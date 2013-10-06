@@ -72,7 +72,7 @@ http.createServer(function (req, res) {
       FromUserName : data.ToUserName,
       ToUserName : data.FromUserName,
       //MsgType : "text",
-      Content : "这是事件回复"
+      Content : (data.Event == "subscribe") ? "欢迎订阅" : "欢迎再次订阅"
     }
     wechat.send(msg);
   });
