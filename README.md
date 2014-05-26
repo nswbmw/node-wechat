@@ -7,9 +7,7 @@
 ### 使用示例 1 ###
 
     var http = require('http'),
-        wechat = require('node-wechat');
-
-    wechat.token = 'your_token';
+        wechat = require('node-wechat')(your_token);
 
     http.createServer(function (req, res) {
       //检验 token
@@ -62,9 +60,7 @@
 ### 使用示例 2 ###
 
     var http = require('http'),
-        wechat = require('node-wechat');
-
-    wechat.token = 'your_token';
+        wechat = require('node-wechat')(your_token);
 
     http.createServer(function (req, res) {
       //检验 token
@@ -101,5 +97,4 @@
 
 详见 `example2.js` 。
 
-
-**注意**：不管是示例1还是示例2，只要触发 `text` 、`image` 、`location` 、`link` 、`event` 中的任意一个监听器，即使触发 `all` 监听器也不会返回任何东西，因为之前已经使用 `res.end()` 了。
+如需更多功能，你可以尝试 [wechat](https://github.com/node-webot/wechat)
