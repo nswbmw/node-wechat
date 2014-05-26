@@ -5,10 +5,13 @@ var url = require('url'),
     emitter = new events.EventEmitter(),
     xml2js = require('xml2js');
 
-var Wechat = function() {
+var Wechat = function(token) {
+  if (!(this instanceof Wechat)) {
+    return new Wechat(token);
+  }
+  this.token = token;
+  this.res = null;
 }
-
-Wechat.prototype.token = '';
 
 //检验 token
 Wechat.prototype.checkSignature = function(req, res) {
@@ -28,13 +31,11 @@ Wechat.prototype.checkSignature = function(req, res) {
   }
 }
 
-var RES;//存储要返回的响应
-
 //预处理器
 Wechat.prototype.handler = function(req, res) {
-  RES = res;
   var xml = '';
   var self = this;
+  self.res = res;
 
   req.setEncoding('utf8');
   req.on('data', function (chunk) {
@@ -73,6 +74,22 @@ Wechat.prototype.toJSON = function(xml) {
         emitter.emit("image", msg);
         break;
 
+      case 'voice' :
+        msg.MediaId = data.MediaId[0];
+        msg.Format = data.Format[0];
+        msg.MsgId = data.MsgId[0];
+
+        emitter.emit("voice", msg);
+        break;
+
+      case 'video' :
+        msg.MediaId = data.MediaId[0];
+        msg.ThumbMediaId = data.ThumbMediaId[0];
+        msg.MsgId = data.MsgId[0];
+
+        emitter.emit("video", msg);
+        break;
+        
       case 'location' : 
         msg.Location_X = data.Location_X[0];
         msg.Location_Y = data.Location_Y[0];
@@ -97,23 +114,6 @@ Wechat.prototype.toJSON = function(xml) {
         msg.EventKey = data.EventKey[0];
 
         emitter.emit("event", msg);
-        break;
-
-      case 'voice' :
-        msg.MediaId = data.MediaId[0];
-        msg.Format = data.Format[0];
-        msg.MsgId = data.MsgId[0];
-        msg.Recognition = data.Recognition[0];
-
-        emitter.emit("voice", msg);
-        break;
-
-      case 'video' :
-        msg.MediaId = data.MediaId[0];
-        msg.ThumbMediaId = data.ThumbMediaId[0];
-        msg.MsgId = data.MsgId[0];
-
-        emitter.emit("video", msg);
         break;
     }
   });
@@ -192,8 +192,7 @@ Wechat.prototype.toXML = function(data) {
       "<ToUserName><![CDATA[" + data.ToUserName + "]]></ToUserName>" +
       "<FromUserName><![CDATA[" + data.FromUserName + "]]></FromUserName>" +
       "<CreateTime>" + Date.now()/1000 + "</CreateTime>" +
-      "<MsgType><![CDATA[" + MsgType + "]]></MsgType>" +
-      "<FuncFlag>" + (data.FuncFlag || 0) + "</FuncFlag>";
+      "<MsgType><![CDATA[" + MsgType + "]]></MsgType>";
 
   switch(MsgType) {
     case 'text' : 
@@ -202,6 +201,29 @@ Wechat.prototype.toXML = function(data) {
         "</xml>";
       return msg;
 
+    case 'image' :
+      msg += "" +
+        "<Image>" +
+        "<MediaId><![CDATA[" + data.MediaId +"]]></MediaId>" +
+        "</Image>" +
+        "</xml>";
+
+    case 'voice' :
+      msg += "" +
+        "<Voice>" +
+        "<MediaId><![CDATA[" + data.MediaId +"]]></MediaId>" +
+        "<Title><![CDATA[" + data.Title +"]]></Title>" +
+        "<Description><![CDATA[" + data.Description +"]]></Description>" +
+        "</Voice>" +
+        "</xml>";
+
+    case 'video' :
+      msg += "" +
+        "<Video>" +
+        "<MediaId><![CDATA[" + data.MediaId +"]]></MediaId>" +
+        "</Video>" +
+        "</xml>";
+
     case 'music' :
       msg += "" +
         "<Music>" +
@@ -209,6 +231,7 @@ Wechat.prototype.toXML = function(data) {
         "<Description><![CDATA[" + (data.Description || '') + "]]></Description>" +
         "<MusicUrl><![CDATA[" + (data.MusicUrl || '') + "]]></MusicUrl>" +
         "<HQMusicUrl><![CDATA[" + (data.HQMusicUrl || data.MusicUrl || '') + "]]></HQMusicUrl>" +
+        "<ThumbMediaId><![CDATA[" + (data.ThumbMediaId || '') + "]]></ThumbMediaId>" +
         "</Music>" +
         "</xml>";
       return msg;
@@ -233,9 +256,9 @@ Wechat.prototype.toXML = function(data) {
 
 //回复消息
 Wechat.prototype.send = function(data) {
-  RES.writeHead(200, {'Content-Type': 'text/plain'});
-  RES.end(this.toXML(data));
-  return RES;
+  this.res.writeHead(200, {'Content-Type': 'text/plain'});
+  this.res.end(this.toXML(data));
+  return this;
 }
 
-module.exports = new Wechat();
+module.exports = Wechat;

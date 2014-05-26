@@ -1,7 +1,5 @@
 var http = require('http'),
-    wechat = require('node-wechat');
-
-wechat.token = 'your_token';
+    wechat = require('node-wechat')(your_token);
 
 http.createServer(function (req, res) {
   //检验 token

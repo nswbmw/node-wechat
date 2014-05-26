@@ -1,7 +1,5 @@
 var http = require('http'),
-    wechat = require('node-wechat');
-
-wechat.token = 'your_token';
+    wechat = require('node-wechat')(your_token);
 
 http.createServer(function (req, res) {
   //检验 token
@@ -24,8 +22,8 @@ http.createServer(function (req, res) {
       //MsgType : "music",
       Title : "宋冬野",
       Description : "宋冬野——摩登天空7",
-      MusicUrl : "http://zhangmenshiting.baidu.com/data2/music/71272862/44897031226800128.mp3?xcode=1a2d5c8fd915c2383b15453819db7b4dc3b34145ef4199ad",
-      //HQMusicUrl : "http://zhangmenshiting.baidu.com/data2/music/71272862/44897031226800128.mp3?xcode=1a2d5c8fd915c2383b15453819db7b4dc3b34145ef4199ad",
+      MusicUrl : "http://zhangmenshiting.baidu.com/data2/music/71272862/44897031226800128.mp3?xcode=8c25fcb0e8157c1d4ee014e7c541cba8c3b34145ef4199ad",
+      //HQMusicUrl : "http://zhangmenshiting.baidu.com/data2/music/71272862/44897031226800128.mp3?xcode=8c25fcb0e8157c1d4ee014e7c541cba8c3b34145ef4199ad",
       //FuncFlag : 0
     }
 
