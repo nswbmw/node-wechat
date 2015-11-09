@@ -45,6 +45,13 @@ Wechat.prototype.handler = function(req, res) {
   req.on('end', function() {
     self.toJSON(xml);
   });
+
+  /**
+   * clear all listening events to avoid repeat triggers
+   */
+  emitter.removeAllListeners('text');
+  emitter.removeAllListeners('voice');
+  emitter.removeAllListeners('event');
 }
 
 //解析器
@@ -122,55 +129,55 @@ Wechat.prototype.toJSON = function(xml) {
 
 //监听文本信息
 Wechat.prototype.text = function(callback) {
-  emitter.on("text", callback);
+  emitter.once("text", callback);
   return this;
 }
 
 //监听图片信息
 Wechat.prototype.image = function(callback) {
-  emitter.on("image", callback);
+  emitter.once("image", callback);
   return this;
 }
 
 //监听地址信息
 Wechat.prototype.location = function(callback) {
-  emitter.on("location", callback);
+  emitter.once("location", callback);
   return this;
 }
 
 //监听链接信息
 Wechat.prototype.link = function(callback) {
-  emitter.on("link", callback);
+  emitter.once("link", callback);
   return this;
 }
 
 //监听事件信息
 Wechat.prototype.event = function(callback) {
-  emitter.on("event", callback);
+  emitter.once("event", callback);
   return this;
 }
 
 //监听语音信息
 Wechat.prototype.voice = function(callback) {
-  emitter.on("voice", callback);
+  emitter.once("voice", callback);
   return this;
 }
 
 //监听视频信息
 Wechat.prototype.video = function(callback) {
-  emitter.on("video", callback);
+  emitter.once("video", callback);
   return this;
 }
 
 //监听所有信息
 Wechat.prototype.all = function(callback) {
-  emitter.on("text", callback);
-  emitter.on("image", callback);
-  emitter.on("location", callback);
-  emitter.on("link", callback);
-  emitter.on("event", callback);
-  emitter.on("voice", callback);
-  emitter.on("video", callback);
+  emitter.once("text", callback);
+  emitter.once("image", callback);
+  emitter.once("location", callback);
+  emitter.once("link", callback);
+  emitter.once("event", callback);
+  emitter.once("voice", callback);
+  emitter.once("video", callback);
 
   return this;
 }
