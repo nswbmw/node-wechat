@@ -1,6 +1,6 @@
 {
   "name": "node-wechat",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Node.js 微信公众平台 API",
   "main": "index.js",
   "scripts": {
