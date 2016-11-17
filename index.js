@@ -171,13 +171,13 @@ Wechat.prototype.video = function(callback) {
 
 //监听所有信息
 Wechat.prototype.all = function(callback) {
-  emitter.once("text", callback);
-  emitter.once("image", callback);
-  emitter.once("location", callback);
-  emitter.once("link", callback);
-  emitter.once("event", callback);
-  emitter.once("voice", callback);
-  emitter.once("video", callback);
+  if (this.image.text === 0) emitter.once("text", callback);
+  if (this.image.length === 0) emitter.once("image", callback);
+  if (this.location.length === 0) emitter.once("location", callback);
+  if (this.link.length === 0) emitter.once("link", callback);
+  if (this.event.length === 0) emitter.once("event", callback);
+  if (this.voice.length === 0) emitter.once("voice", callback);
+  if (this.video.length === 0) emitter.once("video", callback);
 
   return this;
 }
