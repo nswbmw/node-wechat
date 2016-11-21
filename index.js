@@ -57,6 +57,8 @@ Wechat.prototype.handler = function(req, res) {
 //解析器
 Wechat.prototype.toJSON = function(xml) {
   var msg = {};
+  var self = this;
+
   xml2js.parseString(xml, function (err, result) {
     var data = result.xml;
 
@@ -64,6 +66,8 @@ Wechat.prototype.toJSON = function(xml) {
     msg.FromUserName = data.FromUserName[0];
     msg.CreateTime = data.CreateTime[0];
     msg.MsgType = data.MsgType[0];
+
+	self.msg = msg;
 
     switch(msg.MsgType) {
       case 'text' : 
@@ -192,6 +196,13 @@ Wechat.prototype.toXML = function(data) {
     if (data.hasOwnProperty("Articles")) MsgType = "news";
   } else {
     MsgType = data.MsgType;
+  }
+
+  if (!data.hasOwnProperty("FromUserName")) {
+	  data.FromUserName = this.msg.ToUserName;
+  }
+  if (!data.hasOwnProperty("ToUserName")) {
+	  data.ToUserName = this.msg.FromUserName;
   }
 
   var msg = "" +
